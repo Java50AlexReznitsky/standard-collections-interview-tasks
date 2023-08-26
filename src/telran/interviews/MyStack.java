@@ -1,39 +1,56 @@
 package telran.interviews;
 
 import java.util.Comparator;
-// Requirement: all methods must have complexity O[1]
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public class MyStack<T> {
-	// TODO insert the required fields
-	public MyStack(Comparator<T> comparator) {
-		// TODO comparator for comparing to Objects of a class T
+	private LinkedList<T> myLinkedList;
+	private LinkedList<T> maxValues;
+	private Comparator<T> comparator;
+
+	public MyStack(Comparator<T> comp) {
+		comparator = comp;
+		myLinkedList = new LinkedList<T>();
+		maxValues = new LinkedList<T>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public MyStack() {
-		// TODO for comparing in the natural order (Comparable)
+		this((Comparator<T>) Comparator.naturalOrder());
 	}
 
 	public void push(T element) {
-		// TODO adds element to the stack's top (last element of the stack)
+		myLinkedList.add(element);
+		if (maxValues.isEmpty() || comparator.compare(element, maxValues.getLast()) >= 0) {
+			maxValues.add(element);
+		} else {
+			maxValues.add(maxValues.getLast());
+		}
 	}
 
 	public T pop() {
-		// TODO removes the stack's top element and returns it out
-		// In the case no elements are exist in the stack, the methods throws exception
-		// "NoSuchElementException"
-		return null;
+		if (isEmpty()) {
+			throw new NoSuchElementException("empty stack");
+		}
+		T removedElement = myLinkedList.removeLast();
+		maxValues.remove(maxValues.getLast());
+		return removedElement;
 	}
 
 	public boolean isEmpty() {
-		// TODO returns true if the stack is empty, otherwise false
-		return false;
+		return myLinkedList.size() == 0 && maxValues.size() == 0 ? true : false;
 	}
 
 	public T getMax() {
-		// TODO returns the Max element of the stack
-		// cast to comparable
-		// In the case no elements are exist in the stack, the methods throws exception
-		// "NoSuchElementException"
-		return null;
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		return maxValues.getLast();
+	}
+
+	@SuppressWarnings("unchecked")
+	public T[] toArray() {
+		return (T[]) myLinkedList.toArray();
 	}
 }
